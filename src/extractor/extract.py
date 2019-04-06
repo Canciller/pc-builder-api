@@ -22,10 +22,18 @@ for el in components:
     col = db[el[1]]
     info = pcpp.productLists.getList(el[0], pageNum=1)
     for comp in info:
-        if comp['price']:
+        for key in list(comp):
+            newk = key.replace(' ', '_');
+            newk = newk.replace('/', '_');
+            newk = newk.replace('-', '_');
+            if newk != key:
+                comp[newk] = comp[key]
+                del comp[key]
+        if 'price' in comp:
             comp['price'] = comp['price'].replace('$', '')
         else: continue
         comp['rating'] = comp['ratings']
         del comp['id']
         del comp['ratings']
+        if comp['price'] == '': continue
         col.insert_one(comp)
